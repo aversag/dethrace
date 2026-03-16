@@ -2263,7 +2263,7 @@ void ResendGuaranteedMessages(void) {
 // FUNCTION: CARM95 0x0044ad06
 int SampleFailNotifier(tU32 pAge, tNet_message* pMessage) {
 
-    return pAge > 9999;
+    return 10000 <= pAge;
 }
 
 // IDA: void __cdecl NetWaitForGuaranteeReplies()
