@@ -452,7 +452,6 @@ int QuitVerifyDone(int pCurrent_choice, int pCurrent_mode, int pGo_ahead, int pE
         if (pCurrent_choice) {
             memcpy(gBack_screen->pixels, gPixels_copy__mainmenu, gPixel_buffer_size__mainmenu);
             memcpy(gCurrent_palette_pixels, gPalette_copy__mainmenu, 0x400u);
-            g16bit_palette_valid = 0;
         } else {
             ClearEntireScreen();
         }
@@ -535,6 +534,7 @@ int DoVerifyQuit(int pReplace_background) {
     int switched_res;
     int woz_in_race;
 
+    switched_res = 0;
     woz_in_race = 0;
     if (gAusterity_mode) {
         return 1;
@@ -546,8 +546,7 @@ int DoVerifyQuit(int pReplace_background) {
         woz_in_race = 1;
         gProgram_state.racing = 0;
     }
-    result = IRandomBetween(1, 3);
-    switch (result) {
+    switch (IRandomBetween(1, 3)) {
     case 1:
         interface_spec.first_opening_flic = 130;
         break;
@@ -559,7 +558,7 @@ int DoVerifyQuit(int pReplace_background) {
         break;
     }
     gMouse_was_started__mainmenu = gMouse_started;
-    if (gMouse_started) {
+    if (gMouse_was_started__mainmenu) {
         RemoveTransientBitmaps(1);
         EndMouseCursor();
     }
