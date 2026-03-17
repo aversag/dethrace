@@ -221,40 +221,38 @@ void NextPratcamChunk(void) {
     int count;
     tPrat_alternative* current_alternative;
 
-    if (gCurrent_pratcam_index == -1) {
-        gCurrent_pratcam_index = gCurrent_ambient_prat_sequence;
-    } else {
+    if (gCurrent_pratcam_index != -1) {
         EndFlic(&gPrat_flic);
+    } else {
+        gCurrent_pratcam_index = gCurrent_ambient_prat_sequence;
     }
     count = gCurrent_pratcam_chunk;
     gCurrent_pratcam_chunk++;
     if (gPratcam_sequences[gCurrent_pratcam_index].number_of_chunks <= count) {
-        if (gPending_ambient_prat == -1) {
-            ChangeAmbientPratcamNow(gCurrent_ambient_prat_sequence, gPratcam_sequences[gCurrent_pratcam_index].repeat_chunk);
-        } else {
+        if (gPending_ambient_prat != -1) {
             ChangeAmbientPratcamNow(gPending_ambient_prat, 0);
+        } else {
+            ChangeAmbientPratcamNow(gCurrent_ambient_prat_sequence, gPratcam_sequences[gCurrent_pratcam_index].repeat_chunk);
         }
     } else {
         gLast_pratcam_frame_time = 0;
         random_number = IRandomBetween(0, 99);
-        for (i = 0; i < gPratcam_sequences[gCurrent_pratcam_index].chunks[gCurrent_pratcam_chunk].number_of_alternatives; i++) {
-            current_alternative = &gPratcam_sequences[gCurrent_pratcam_index].chunks[gCurrent_pratcam_chunk].alternatives[i];
+        current_alternative = (tPrat_alternative*)((char*)gPratcam_sequences + sizeof(tPrat_sequence) * gCurrent_pratcam_index
+            + sizeof(tPrat_flic_chunk) * gCurrent_pratcam_chunk + 16);
+        count = *(int*)((char*)gPratcam_sequences + sizeof(tPrat_sequence) * gCurrent_pratcam_index
+            + sizeof(tPrat_flic_chunk) * gCurrent_pratcam_chunk + 12);
+        for (i = 0; i < count; i++, current_alternative++) {
             random_number -= current_alternative->chance;
             if (random_number <= 0) {
                 gCurrent_pratcam_alternative = i;
                 gPrat_flic.data_start = NULL;
                 StartFlic(NULL, -1, &gPrat_flic, gPratcam_flics[current_alternative->ref].data_length,
                     (tS8*)gPratcam_flics[current_alternative->ref].data, gPrat_buffer, 0, 0, 0);
-                if (current_alternative->sound_chance == 0) {
-                    return;
+                if (current_alternative->sound_chance != 0
+                    && PercentageChance(current_alternative->sound_chance)
+                    && (gCurrent_pratcam_precedence != 0 || !DRS3OutletSoundsPlaying(gDriver_outlet))) {
+                    DRS3StartSound(gDriver_outlet, current_alternative->sound_ids[IRandomBetween(0, current_alternative->number_of_sounds - 1)]);
                 }
-                if (!PercentageChance(current_alternative->sound_chance)) {
-                    return;
-                }
-                if (gCurrent_pratcam_precedence == 0 && DRS3OutletSoundsPlaying(gDriver_outlet)) {
-                    return;
-                }
-                DRS3StartSound(gDriver_outlet, current_alternative->sound_ids[IRandomBetween(0, current_alternative->number_of_sounds - 1)]);
                 return;
             }
         }
