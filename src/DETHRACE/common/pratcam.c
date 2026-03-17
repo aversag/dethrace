@@ -226,9 +226,7 @@ void NextPratcamChunk(void) {
     } else {
         gCurrent_pratcam_index = gCurrent_ambient_prat_sequence;
     }
-    count = gCurrent_pratcam_chunk;
-    gCurrent_pratcam_chunk++;
-    if (gPratcam_sequences[gCurrent_pratcam_index].number_of_chunks <= count) {
+    if (gPratcam_sequences[gCurrent_pratcam_index].number_of_chunks <= gCurrent_pratcam_chunk++) {
         if (gPending_ambient_prat != -1) {
             ChangeAmbientPratcamNow(gPending_ambient_prat, 0);
         } else {
