@@ -138,10 +138,10 @@ tShrapnel gShrapnel[15];
 // Bugfix: At higher FPS, `CreatePuffOfSmoke` is called too often and causes smoke cirlces to be recycled too quickly so assume around 25fps
 #define SMOKE_COLUMN_NEW_PUFF_INTERVAL 30
 
-#define TEST_BIT(var, pos)   (var & (1 << pos))
-#define SET_BIT(var, pos)    (var |= (1 << pos))
-#define FLIP_BIT(var, pos)   (var ^= (1 << pos))
-#define CLEAR_BIT(var, pos)  (var &= ~(1 << pos))
+#define TEST_BIT(var, pos) (var & (1 << pos))
+#define SET_BIT(var, pos) (var |= (1 << pos))
+#define FLIP_BIT(var, pos) (var ^= (1 << pos))
+#define CLEAR_BIT(var, pos) (var &= ~(1 << pos))
 
 // IDA: void __cdecl DrawDot(br_scalar z, tU8 *scr_ptr, tU16 *depth_ptr, tU8 *shade_ptr)
 // FUNCTION: CARM95 0x00466310
@@ -257,10 +257,10 @@ int DrawLine2D(br_vector3* o, br_vector3* p, br_pixelmap* pScreen, br_pixelmap* 
     scr_ptr = (tU8*)pScreen->pixels + pScreen->base_x + pScreen->base_y * pScreen->row_bytes;
     depth_ptr = (tU16*)pDepth_buffer->pixels;
     shade_ptr = (tU8*)shade_table->pixels + shade_table->base_y * shade_table->row_bytes;
-    x1 = (int)o->v[0] + pScreen->width / 2;
-    x2 = (int)p->v[0] + (unsigned int)pScreen->width / 2;
-    y1 = -(int)o->v[1] + (int)pScreen->height / 2;
-    y2 = -(int)p->v[1] + pScreen->height / 2;
+    x1 = DR_FF((int)o->v[0]) + pScreen->width / 2;
+    x2 = DR_FF((int)p->v[0]) + pScreen->width / 2;
+    y1 = DR_FF(-(int)o->v[1]) + pScreen->height / 2;
+    y2 = DR_FF(-(int)p->v[1]) + pScreen->height / 2;
     if (brightness < 0.001f || brightness > 1.0f) {
         return 0;
     }

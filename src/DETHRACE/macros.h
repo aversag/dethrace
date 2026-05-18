@@ -100,5 +100,8 @@
 #define DETHRACE_DEFAULT_BREAK
 #endif
 
+// "Force first" - for asm matching it can be helpful to try and force one branch/operation to be evaluated first
+#define DR_FF(x) (x * 1)
+
 // MACROS_H
 #endif
